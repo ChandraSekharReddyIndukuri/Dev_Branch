@@ -24,7 +24,7 @@ pipeline {
             steps {
                 echo 'Running Python script...'
                 // Assuming the Python script is named script.py
-                sh 'python script.py'
+                sh 'build.py'
             }
         }
 
