@@ -1,6 +1,11 @@
 pipeline {
     agent any
-
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', git 'https://github.com/ChandraSekharReddyIndukuri/Dev_Branch.git'
+            }
+        }
     stages {
         stage('Checkout') {
             steps {
@@ -14,7 +19,7 @@ pipeline {
                 echo 'Hello, Jenkins! This is a print statement.'
             }
         }
-        
+ 
         stage('Run Python Script') {
             steps {
                 echo 'Running Python script...'
@@ -28,5 +33,28 @@ pipeline {
                 echo 'Jenkins pipeline execution completed!'
             }
         }
+   stage('Build') {
+            steps {
+                echo "Building the project..."
+                // Add your build commands, e.g., make, mvn, or npm
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo "Running tests..."
+                // Add test commands, e.g., pytest, JUnit, etc.
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "Deploying the application..."
+                // Add deployment commands, e.g., SSH to server, copy artifacts, restart service
+            }
+        }
     }
 }
+    
+        
+
