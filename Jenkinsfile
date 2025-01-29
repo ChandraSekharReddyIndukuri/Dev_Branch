@@ -51,6 +51,7 @@ pipeline {
             steps {
                 echo "Deploying the application..."
                 // Add deployment commands, e.g., SSH to server, copy artifacts, restart service
+                //testing
             }
         }
     }
