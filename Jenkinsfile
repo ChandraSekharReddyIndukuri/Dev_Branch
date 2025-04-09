@@ -1,62 +1,46 @@
 pipeline {
     agent any
+
+    environment {
+        PYTHON = 'python3' // Use 'python' if Windows
+    }
+
     stages {
-        stage('Clone Repository') {
+        stage('Checkout Code') {
             steps {
-                //git branch: 'main', git 'https://github.com/ChandraSekharReddyIndukuri/Dev_Branch.git'
-                git branch: 'main', credentialsId: 'ChandraSekharReddyIndukuri', url: 'https://github.com/ChandraSekharReddyIndukuri/Dev_Branch.git'
-            }
-        }
-    stages {
-        stage('Checkout') {
-            steps {
-                echo 'Checking out the repository...'
-                git 'https://github.com/ChandraSekharReddyIndukuri/Dev_Branch.git'
-            }
-        }
-        
-        stage('Print Hello') {
-            steps {
-                echo 'Hello, Jenkins! This is a print statement.'
-            }
-        }
- 
-        stage('Run Python Script') {
-            steps {
-                echo 'Running Python script...'
-                // Assuming the Python script is named script.py
-                sh 'build.py'
+                git url: 'https://github.com/ChandraSekharReddyIndukuri/Dev_Branch.git', branch: 'main'
             }
         }
 
-        stage('Print End') {
+        stage('Install Dependencies') {
             steps {
-                echo 'Jenkins pipeline execution completed!'
-            }
-        }
-   stage('Build') {
-            steps {
-                echo "Building the project..."
-                // Add your build commands, e.g., make, mvn, or npm
+                sh '''
+                    ${PYTHON} -m pip install --upgrade pip
+                    ${PYTHON} -m pip install pyserial chardet
+                '''
             }
         }
 
-        stage('Test') {
+        stage('Run HIL Test') {
             steps {
-                echo "Running tests..."
-                // Add test commands, e.g., pytest, JUnit, etc.
+                sh 'mkdir -p reports'
+                sh "${PYTHON} hill_test.py > reports/hil_output.log"
             }
         }
 
-        stage('Deploy') {
+        stage('Archive Results') {
             steps {
-                echo "Deploying the application..."
-                // Add deployment commands, e.g., SSH to server, copy artifacts, restart service
-                //testing
+                archiveArtifacts artifacts: 'reports/**', fingerprint: true
             }
         }
     }
-}
-    
-        
 
+    post {
+        success {
+            echo "✅ Build Passed"
+        }
+        failure {
+            echo "❌ Build Failed"
+        }
+    }
+}
