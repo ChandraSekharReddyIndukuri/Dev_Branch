@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        PYTHON = 'python3' // Use 'python' if Windows
+        PYTHON = 'python' // Or full path like 'C:\\Python39\\python.exe' if needed
     }
 
     stages {
@@ -14,17 +14,19 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh '''
+                bat """
                     ${PYTHON} -m pip install --upgrade pip
                     ${PYTHON} -m pip install pyserial chardet
-                '''
+                """
             }
         }
 
         stage('Run HIL Test') {
             steps {
-                sh 'mkdir -p reports'
-                sh "${PYTHON} hill_test.py > reports/hil_output.log"
+                bat """
+                    mkdir reports
+                    ${PYTHON} hill_test.py > reports\\hil_output.log
+                """
             }
         }
 
@@ -37,11 +39,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Build Passed"
+            echo "✅ HIL Test Passed!"
         }
         failure {
-            echo "❌ Build Failed"
+            echo "❌ HIL Test Failed."
         }
     }
 }
-
