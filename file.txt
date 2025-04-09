@@ -1,3 +1,0 @@
-This is text file
-edit
-C:\Users\LENOVO\AppData\Local\Programs\Python\Python311\python.exe --version
