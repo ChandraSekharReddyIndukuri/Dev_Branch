@@ -1,48 +1,47 @@
 pipeline {
     agent any
 
-    environment {
-        PYTHON = 'python' // Or full path like 'C:\\Python39\\python.exe' if needed
-    }
-
     stages {
         stage('Checkout Code') {
             steps {
-                git url: 'https://github.com/ChandraSekharReddyIndukuri/Dev_Branch.git', branch: 'main'
+                // Clone the repository from GitHub
+                git branch: 'Dev_Branch', url: 'https://github.com/ChandraSekharReddyIndukuri/Dev_Branch'
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Prepare Environment') {
             steps {
-                bat """
-                    ${PYTHON} -m pip install --upgrade pip
-                    ${PYTHON} -m pip install pyserial chardet
-                """
+                // Set up your environment if needed
+                echo 'Preparing HIL testing environment...'
+                bat '''
+                echo Setting up dependencies on Windows...
+                '''
             }
         }
 
-        stage('Run HIL Test') {
+        stage('Run HIL Test Cases') {
             steps {
-                bat """
-                    mkdir reports
-                    ${PYTHON} hill_test.py > reports\\hil_output.log
-                """
+                // Run your HIL test cases
+                echo 'Executing HIL test script...'
+                bat 'python C:\\Users\\LENOVO\\Downloads\\hill_test.py'
             }
         }
 
-        stage('Archive Results') {
+        stage('Post-Test Actions') {
             steps {
-                archiveArtifacts artifacts: 'reports/**', fingerprint: true
+                // Collect logs and save results
+                echo 'Collecting test results...'
+                bat '''
+                mkdir test_results
+                echo Simulating result collection on Windows...
+                '''
+                archiveArtifacts artifacts: 'test_results\\*.log', allowEmptyArchive: true
             }
         }
     }
 
-    post {
-        success {
-            echo "✅ HIL Test Passed!"
-        }
-        failure {
-            echo "❌ HIL Test Failed."
-        }
+    triggers {
+        // Trigger the pipeline on GitHub push events
+        githubPush()
     }
 }
